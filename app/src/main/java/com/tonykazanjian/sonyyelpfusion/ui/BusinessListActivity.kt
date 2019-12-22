@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import com.tonykazanjian.sonyyelpfusion.R
 
 import com.tonykazanjian.sonyyelpfusion.dummy.DummyContent
+import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
 import kotlinx.android.synthetic.main.business_list_content.view.*
 import kotlinx.android.synthetic.main.business_list.*
@@ -24,7 +26,7 @@ import kotlinx.android.synthetic.main.business_list.*
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class BusinessListActivity : AppCompatActivity() {
+class BusinessListActivity : BaseActivity() {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -32,9 +34,12 @@ class BusinessListActivity : AppCompatActivity() {
      */
     private var twoPane: Boolean = false
 
+    lateinit var businessListViewModel: BusinessListViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_list)
+        appComponent.inject(this)
 
         setSupportActionBar(toolbar)
         toolbar.title = title
@@ -51,6 +56,8 @@ class BusinessListActivity : AppCompatActivity() {
             // activity should be in two-pane mode.
             twoPane = true
         }
+
+        businessListViewModel = ViewModelProvider(this, viewModeFactory).get(BusinessListViewModel::class.java)
 
         setupRecyclerView(business_list)
     }

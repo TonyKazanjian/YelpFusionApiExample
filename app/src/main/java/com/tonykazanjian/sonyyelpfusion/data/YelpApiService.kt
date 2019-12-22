@@ -11,10 +11,13 @@ import retrofit2.http.Query
 
 interface YelpApiService {
 
-    @GET("/businesses/search")
+    @GET("businesses/search")
     //TODO - location
-    fun getBusinesses(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Query("term") searchTerm: String): Observable<BusinessesResponse>
+    fun getBusinesses(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String,
+                      @Query("term") searchTerm: String,
+                      @Query("latitude") latitude: String,
+                      @Query("longitude") longitude: String): Observable<BusinessesResponse>
 
-    @GET("/businesses/{id}")
+    @GET("businesses/{id}")
     fun getBusinessById(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<Business>
 }

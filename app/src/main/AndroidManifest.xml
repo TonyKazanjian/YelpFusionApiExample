@@ -31,6 +31,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tonykazanjian.sonyyelpfusion.ui.BusinessListActivity" />
         </activity>
+        <activity android:name=".ui.BaseActivity"/>
     </application>
 
 </manifest>

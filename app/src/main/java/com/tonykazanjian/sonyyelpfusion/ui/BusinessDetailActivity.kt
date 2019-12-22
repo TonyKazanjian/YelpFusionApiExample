@@ -6,7 +6,10 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.tonykazanjian.sonyyelpfusion.R
+import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_business_detail.*
+import javax.inject.Inject
 
 /**
  * An activity representing a single Business detail screen. This
@@ -14,11 +17,12 @@ import kotlinx.android.synthetic.main.activity_business_detail.*
  * item details are presented side-by-side with a list of items
  * in a [BusinessListActivity].
  */
-class BusinessDetailActivity : AppCompatActivity() {
+class BusinessDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_detail)
+        appComponent.inject(this)
         setSupportActionBar(detail_toolbar)
 
         fab.setOnClickListener { view ->

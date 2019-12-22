@@ -10,7 +10,7 @@ import javax.inject.Singleton
  * @author Tony Kazanjian
  */
 @Singleton
-@Component(modules = [AppModule::class, RetrofitModule::class, RestApiModule::class])
+@Component(modules = [AppModule::class, RetrofitModule::class, RestApiModule::class, ViewModelModule::class])
 interface AppComponent {
 
     fun inject(application: YelpApplication)
