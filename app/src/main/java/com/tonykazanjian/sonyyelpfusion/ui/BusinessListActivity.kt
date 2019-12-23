@@ -4,24 +4,21 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tonykazanjian.sonyyelpfusion.R
+import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
 
-import com.tonykazanjian.sonyyelpfusion.dummy.DummyContent
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
-import kotlinx.android.synthetic.main.activity_business_list_dep.*
-import kotlinx.android.synthetic.main.activity_business_list_dep.toolbar
-import kotlinx.android.synthetic.main.business_list_content.view.*
 import kotlinx.android.synthetic.main.business_list.*
 
 /**
@@ -41,20 +38,51 @@ class BusinessListActivity : BaseActivity() {
     private var twoPane: Boolean = false
 
     lateinit var businessListViewModel: BusinessListViewModel
+    lateinit var binding: ActivityBusinessListBinding
+
+    private val businessAdapter = BusinessListAdapter( {
+        business ->
+        //TODO - change alias to something else?
+        if (twoPane) {
+            val fragment = BusinessDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString(BusinessDetailFragment.ARG_ITEM_ID, business.alias)
+                }
+            }
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.business_detail_container, fragment)
+                .commit()
+        } else {
+            val intent = Intent(this, BusinessDetailActivity::class.java).apply {
+                putExtra(BusinessDetailFragment.ARG_ITEM_ID, business.alias)
+            }
+            startActivity(intent)
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_business_list)
         appComponent.inject(this)
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_business_list)
+        businessListViewModel = ViewModelProvider(this, viewModeFactory).get(BusinessListViewModel::class.java)
 
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            Log.d("TONY", query)
-
+        binding.apply {
+            setSupportActionBar(toolbar)
+            toolbar.title = title
+            businessListRecyclerView.apply {
+                adapter = businessAdapter
+                layoutManager = LinearLayoutManager(this.context)
+                addItemDecoration(
+                    DividerItemDecoration(
+                        this.context,
+                        LinearLayout.VERTICAL
+                    )
+                )
+            }
+            lifecycleOwner = this@BusinessListActivity
+            viewModel = businessListViewModel
         }
-
-        setSupportActionBar(toolbar)
-        toolbar.title = title
 
         if (business_detail_container != null) {
             // The detail container view will be present only in the
@@ -64,9 +92,29 @@ class BusinessListActivity : BaseActivity() {
             twoPane = true
         }
 
-        businessListViewModel = ViewModelProvider(this, viewModeFactory).get(BusinessListViewModel::class.java)
+        businessListViewModel.getBusinesses().observe(this, Observer {
+            if (it.isEmpty()){
+                //TODO - show no items message
+            } else {
+                businessAdapter.setQueryData(it)
+            }
+        })
 
-        setupRecyclerView(business_list_recycler_view)
+        businessListViewModel.isLoading().observe(this, Observer { isLoading ->
+            if (!isLoading){
+                binding.progressBar.visibility = View.INVISIBLE
+            } else {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (Intent.ACTION_SEARCH == intent?.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            businessListViewModel.fetchBusinesses(query)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -77,70 +125,5 @@ class BusinessListActivity : BaseActivity() {
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
         return true
-    }
-
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.adapter =
-            SimpleItemRecyclerViewAdapter(
-                this,
-                DummyContent.ITEMS,
-                twoPane
-            )
-    }
-
-    class SimpleItemRecyclerViewAdapter(
-        private val parentActivity: BusinessListActivity,
-        private val values: List<DummyContent.DummyItem>,
-        private val twoPane: Boolean
-    ) :
-        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
-
-        private val onClickListener: View.OnClickListener
-
-        init {
-            onClickListener = View.OnClickListener { v ->
-                val item = v.tag as DummyContent.DummyItem
-                if (twoPane) {
-                    val fragment = BusinessDetailFragment().apply {
-                        arguments = Bundle().apply {
-                            putString(BusinessDetailFragment.ARG_ITEM_ID, item.id)
-                        }
-                    }
-                    parentActivity.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.business_detail_container, fragment)
-                        .commit()
-                } else {
-                    val intent = Intent(v.context, BusinessDetailActivity::class.java).apply {
-                        putExtra(BusinessDetailFragment.ARG_ITEM_ID, item.id)
-                    }
-                    v.context.startActivity(intent)
-                }
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.business_list_content, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
-
-            with(holder.itemView) {
-                tag = item
-                setOnClickListener(onClickListener)
-            }
-        }
-
-        override fun getItemCount() = values.size
-
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val idView: TextView = view.id_text
-            val contentView: TextView = view.content
-        }
     }
 }

@@ -27,9 +27,4 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(BusinessDetailViewModel::class)
     abstract fun bindDetailViewModel(detailViewModel: BusinessDetailViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(BusinessItemViewModel::class)
-    abstract fun bindSubBreedImageViewModel(subBreedImageViewModel: BusinessItemViewModel): ViewModel
 }

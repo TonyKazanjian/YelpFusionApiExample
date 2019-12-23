@@ -14,6 +14,7 @@
         <activity
             android:name=".ui.BusinessListActivity"
             android:label="@string/title_business_list"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>

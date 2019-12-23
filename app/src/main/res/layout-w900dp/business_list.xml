@@ -18,17 +18,15 @@
     
     -->
 
-    <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/business_list"
         android:name="com.tonykazanjian.sonyyelpfusion.BusinessListFragment"
-        android:layout_width="@dimen/item_width"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.tonykazanjian.sonyyelpfusion.ui.BusinessListActivity"
-        tools:listitem="@layout/business_list_content" />
+        tools:context="com.tonykazanjian.sonyyelpfusion.ui.BusinessListActivity" />
 
     <FrameLayout
         android:id="@+id/business_detail_container"

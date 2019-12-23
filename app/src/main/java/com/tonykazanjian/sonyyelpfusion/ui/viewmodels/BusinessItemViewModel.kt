@@ -1,7 +1,8 @@
 package com.tonykazanjian.sonyyelpfusion.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import javax.inject.Inject
+import com.tonykazanjian.sonyyelpfusion.data.Business
 
-class BusinessItemViewModel @Inject constructor(): ViewModel() {
+class BusinessItemViewModel (business: Business): ViewModel() {
+    val title = business.name
 }
