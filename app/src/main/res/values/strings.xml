@@ -92,4 +92,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_business_list">Businesses</string>
     <string name="title_business_detail">Business Detail</string>
+    <string name="search_title">Search</string>
 </resources>

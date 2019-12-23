@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.tonykazanjian.sonyyelpfusion.R
+import com.tonykazanjian.sonyyelpfusion.di.DaggerAppComponent
 import com.tonykazanjian.sonyyelpfusion.dummy.DummyContent
 import kotlinx.android.synthetic.main.activity_business_detail.*
 import kotlinx.android.synthetic.main.business_detail.view.*
@@ -25,6 +26,7 @@ class BusinessDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DaggerAppComponent.create().inject(this)
 
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {

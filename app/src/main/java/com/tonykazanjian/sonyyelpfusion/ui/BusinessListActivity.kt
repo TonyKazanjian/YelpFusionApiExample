@@ -1,20 +1,26 @@
 package com.tonykazanjian.sonyyelpfusion.ui
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import com.tonykazanjian.sonyyelpfusion.R
 
 import com.tonykazanjian.sonyyelpfusion.dummy.DummyContent
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
+import kotlinx.android.synthetic.main.activity_business_list_dep.*
+import kotlinx.android.synthetic.main.activity_business_list_dep.toolbar
 import kotlinx.android.synthetic.main.business_list_content.view.*
 import kotlinx.android.synthetic.main.business_list.*
 
@@ -41,13 +47,14 @@ class BusinessListActivity : BaseActivity() {
         setContentView(R.layout.activity_business_list)
         appComponent.inject(this)
 
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            Log.d("TONY", query)
+
+        }
+
         setSupportActionBar(toolbar)
         toolbar.title = title
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
         if (business_detail_container != null) {
             // The detail container view will be present only in the
@@ -59,7 +66,17 @@ class BusinessListActivity : BaseActivity() {
 
         businessListViewModel = ViewModelProvider(this, viewModeFactory).get(BusinessListViewModel::class.java)
 
-        setupRecyclerView(business_list)
+        setupRecyclerView(business_list_recycler_view)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        (menu.findItem(R.id.search).actionView as SearchView).apply {
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        }
+        return true
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {

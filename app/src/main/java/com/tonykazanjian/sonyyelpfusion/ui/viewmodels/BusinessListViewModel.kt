@@ -17,7 +17,7 @@ class BusinessListViewModel @Inject constructor(yelpInteractor: YelpInteractor):
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe ({
-                Log.d("TONY", "$it")
+                Log.d("TONY", "${it.size}")
             }, this::onError)
     }
 
