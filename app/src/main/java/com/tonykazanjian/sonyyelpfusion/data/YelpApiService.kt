@@ -20,4 +20,7 @@ interface YelpApiService {
 
     @GET("businesses/{id}")
     fun getBusinessById(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<Business>
+
+    @GET("businesses/{id}/reviews")
+    fun getBusinessReviews(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<ReviewResponse>
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -12,14 +13,69 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/business_image_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginVertical="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/business_name_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_launcher_background" />
+
         <TextView
             android:id="@+id/business_name_text_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="start"
             android:text="@{viewModel.title}"
-            app:layout_constraintTop_toTopOf="parent"
+            tools:text="StopBreathThinkChallenge"
+            android:layout_marginStart="65dp"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark"
+            app:layout_constraintBottom_toTopOf="@id/business_rating_bar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="@id/business_image_view"/>
+
+        <RatingBar
+            android:id="@+id/business_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:rating="@{viewModel.rating}"
+            style="@android:style/Widget.Material.RatingBar.Small"
+            app:layout_constraintTop_toBottomOf="@id/business_name_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_name_text_view"
+            app:layout_constraintBottom_toBottomOf="@id/business_image_view"/>
+
+        <TextView
+            android:id="@+id/business_status_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            tools:text="Open"
+            android:text="@{viewModel.status}"
+            app:layout_constraintStart_toEndOf="@id/business_rating_bar"
+            app:layout_constraintTop_toTopOf="@id/business_rating_bar"
+            app:layout_constraintBottom_toBottomOf="@id/business_rating_bar"/>
+
+        <TextView
+            android:id="@+id/price_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:text="@{viewModel.price}"
+            tools:text="$$"
+            app:layout_constraintTop_toTopOf="@id/business_rating_bar"
+            app:layout_constraintBottom_toBottomOf="@id/business_rating_bar"
+            app:layout_constraintEnd_toEndOf="@id/business_name_text_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -42,7 +42,6 @@ class BusinessListActivity : BaseActivity() {
 
     private val businessAdapter = BusinessListAdapter( {
         business ->
-        //TODO - change alias to something else?
         if (twoPane) {
             val fragment = BusinessDetailFragment().apply {
                 arguments = Bundle().apply {

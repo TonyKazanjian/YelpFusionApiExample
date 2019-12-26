@@ -12,7 +12,13 @@ class YelpInteractor @Inject constructor(private var yelpApiService: YelpApiServ
         }
     }
 
-    fun getBusinessById(alias: String): Observable<Business>{
+    fun getBusinessByAlias(alias: String): Observable<Business>{
         return yelpApiService.getBusinessById(ApiUtils.createHeader(), alias)
+    }
+
+    fun getBusinessReviews(alias: String): Observable<List<Review>>{
+        return yelpApiService.getBusinessReviews(ApiUtils.createHeader(), alias).map {
+            response -> response.reviewsList
+        }
     }
 }

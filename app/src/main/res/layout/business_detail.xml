@@ -1,10 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/business_detail"
-    style="?android:attr/textAppearanceLarge"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context=".ui.BusinessDetailFragment" />
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessDetailViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/business_detail_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.title()}"
+            android:padding="5dp"
+            tools:text="Business Name"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/business_detail_url_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.url()}"
+            tools:text="www.yelp.business.com"
+            android:autoLink="web"
+            android:padding="5dp"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_name_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_name_text_view" />
+
+        <RatingBar
+            android:id="@+id/business_detail_rating_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:rating="@{viewModel.rating}"
+            style="@android:style/Widget.Material.RatingBar.Small"
+            android:padding="5dp"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_url_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_url_text_view" />
+
+        <TextView
+            android:id="@+id/business_detail_price_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.price()}"
+            android:padding="5dp"
+            tools:text="$$$"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_rating_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_rating_text_view" />
+
+        <TextView
+            android:id="@+id/business_detail_address_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.address}"
+            tools:text="123 Second St \nSan Francisco, CA 94105"
+            android:padding="5dp"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_price_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_price_text_view"/>
+
+        <TextView
+            android:id="@+id/business_detail_phone_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.phoneNumber}"
+            tools:text="(123) 456 7890"
+            android:padding="5dp"
+            android:autoLink="phone"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_address_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_address_text_view"
+            app:layout_constraintBottom_toTopOf="@id/reviews_recyclerView"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reviews_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@id/business_detail_phone_text_view"
+            app:layout_constraintStart_toStartOf="@id/business_detail_phone_text_view"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
