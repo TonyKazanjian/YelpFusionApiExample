@@ -14,9 +14,11 @@ import javax.inject.Inject
 class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpInteractor): ViewModel(){
     private var disposable: Disposable? = null
 
-    private val businessLiveData = MutableLiveData<Business>()
+    val businessLiveData = MutableLiveData<Business>()
 
     val reviewsLiveData = MutableLiveData<List<Review>>()
+
+    val photosLiveData = MutableLiveData<List<String>>()
 
     private var business: Business? = null
 
@@ -33,15 +35,19 @@ class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpIntera
         alias?.let{
             disposable = yelpInteractor.getBusinessByAlias(alias)
                 .subscribeOn(Schedulers.io())
-                .doOnNext { business ->
-                    this.business = business
-                    businessLiveData.postValue(business) }
+                .doOnNext (this::setBusinessData)
                 .flatMap { business -> yelpInteractor.getBusinessReviews(business.alias) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally { isLoading.value = false }
                 .subscribe ({reviews -> reviewsLiveData.postValue(reviews)
                 }, this::onError)
         }
+    }
+
+    private fun setBusinessData(business: Business) {
+        this.business = business
+        photosLiveData.postValue(business.photos)
+        businessLiveData.postValue(business)
     }
 
     fun getTitle(): String? {
@@ -75,20 +81,14 @@ class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpIntera
         return addressBuilder.toString()
     }
 
-    fun getPhotos(): List<String>?{
-        addImageUrlToPhotos()
-        return businessLiveData.value?.photos
-    }
-
     fun isLoading(): LiveData<Boolean> {
         return isLoading
     }
 
-    private fun addImageUrlToPhotos(){
-        businessLiveData.value?.let {
-            if (it.imageUrl.isNotEmpty()){
-                it.photos.toMutableList().add(0, it.imageUrl)
-            }
+    private fun setImageUrlData(){
+        business?.let {
+            it.photos.toMutableList().add(0, it.imageUrl)
+            photosLiveData.postValue(it.photos)
         }
     }
 

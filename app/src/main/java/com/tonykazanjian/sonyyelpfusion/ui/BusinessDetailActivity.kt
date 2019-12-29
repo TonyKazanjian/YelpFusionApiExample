@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_business_detail.*
  * item details are presented side-by-side with a list of items
  * in a [BusinessListActivity].
  */
-class BusinessDetailActivity : BaseActivity() {
+class BusinessDetailActivity : BaseActivity(), BusinessDetailFragment.ImageListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +21,7 @@ class BusinessDetailActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             val fragment = BusinessDetailFragment().apply {
+                setImageListener(this@BusinessDetailActivity)
                 arguments = Bundle().apply {
                     putString(
                         BusinessDetailFragment.ARG_BUSINESS_ALIAS,
@@ -47,4 +48,11 @@ class BusinessDetailActivity : BaseActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+
+    override fun onImagesReceived(imageList: List<String>) {
+        val viewPager = pager
+        val imageAdapter = BusinessImageAdapter()
+        viewPager.adapter = imageAdapter
+        imageAdapter.setImages(imageList)
+    }
 }

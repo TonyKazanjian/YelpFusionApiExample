@@ -90,13 +90,12 @@
             android:padding="5dp"
             android:autoLink="phone"
             app:layout_constraintTop_toBottomOf="@id/business_detail_address_text_view"
-            app:layout_constraintStart_toStartOf="@id/business_detail_address_text_view"
-            app:layout_constraintBottom_toTopOf="@id/reviews_recyclerView"/>
+            app:layout_constraintStart_toStartOf="@id/business_detail_address_text_view" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviews_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:padding="10dp"
             app:layout_constraintTop_toBottomOf="@id/business_detail_phone_text_view"
             app:layout_constraintStart_toStartOf="@id/business_detail_phone_text_view"

@@ -6,4 +6,5 @@
     <string name="search_title">Search</string>
     <string name="business_status_closed">Closed</string>
     <string name="business_status_open">Open</string>
+    <string name="review_date">Reviewed on %1$s</string>
 </resources>

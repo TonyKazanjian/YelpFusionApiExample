@@ -8,11 +8,11 @@ data class Business(
     @SerializedName("image_url") val imageUrl: String,
     @SerializedName("is_closed") val isClosed: Boolean,
     @SerializedName("url") val businessUrl: String,
-    @SerializedName("price") val price: String,
+    @SerializedName("price") val price: String? = "",
     @SerializedName("rating") val rating: Float,
     @SerializedName("photos") val photos: List<String>,
     @SerializedName("location") val location: Location,
-    @SerializedName("display_phone") val phoneNumber: String
+    @SerializedName("display_phone") val phoneNumber: String? = ""
 )
 
 data class Location(
