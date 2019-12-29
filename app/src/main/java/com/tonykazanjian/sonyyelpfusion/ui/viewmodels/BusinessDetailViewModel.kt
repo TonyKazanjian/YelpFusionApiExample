@@ -12,19 +12,11 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpInteractor): ViewModel(){
-//    val title = business.name
-//    val price = business.price
-//    val rating = business.rating
-//    val url = business.businessUrl
-//    val photos = business.photos.toMutableList()
-//    val address = business.location.address
-//    val phoneNumber = business.phoneNumber
-
     private var disposable: Disposable? = null
 
     private val businessLiveData = MutableLiveData<Business>()
 
-    private val reviewsLiveData = MutableLiveData<List<Review>>()
+    val reviewsLiveData = MutableLiveData<List<Review>>()
 
     private var business: Business? = null
 
@@ -36,18 +28,20 @@ class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpIntera
         it.value = false
     }
 
-    fun fetchBusinessDetail(alias: String){
+    fun fetchBusinessDetail(alias: String?){
         isLoading.value = true
-        disposable = yelpInteractor.getBusinessByAlias(alias)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { business ->
-                this.business = business
-                businessLiveData.postValue(business) }
-            .flatMap { business -> yelpInteractor.getBusinessReviews(business.alias) }
-            .doFinally { isLoading.value = false }
-            .subscribe ({reviews -> reviewsLiveData.postValue(reviews)
-            }, this::onError)
+        alias?.let{
+            disposable = yelpInteractor.getBusinessByAlias(alias)
+                .subscribeOn(Schedulers.io())
+                .doOnNext { business ->
+                    this.business = business
+                    businessLiveData.postValue(business) }
+                .flatMap { business -> yelpInteractor.getBusinessReviews(business.alias) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally { isLoading.value = false }
+                .subscribe ({reviews -> reviewsLiveData.postValue(reviews)
+                }, this::onError)
+        }
     }
 
     fun getTitle(): String? {

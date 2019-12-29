@@ -1,11 +1,9 @@
 package com.tonykazanjian.sonyyelpfusion.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tonykazanjian.sonyyelpfusion.data.Business
-import com.tonykazanjian.sonyyelpfusion.data.YelpApiService
 import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -26,15 +24,16 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
         it.value = false
     }
 
-    fun fetchBusinesses(searchTerm: String){
+    fun fetchBusinesses(searchTerm: String?){
         isLoading.value = true
-        disposable = yelpInteractor.getBusinesses(searchTerm)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doFinally { isLoading.value = false }
-            .subscribe ({
-                listLiveData.postValue(it)
-            }, this::onError)
+        searchTerm?.let{
+            disposable = yelpInteractor.getBusinesses(searchTerm)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally { isLoading.value = false }
+                .subscribe ({list -> listLiveData.postValue(list)}, this::onError)
+        }
+
     }
 
     fun getBusinesses(): LiveData<List<Business>>{
@@ -46,6 +45,7 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
     }
 
     private fun onError(e: Throwable){
+        isError.value = true
         e.printStackTrace()
     }
 }

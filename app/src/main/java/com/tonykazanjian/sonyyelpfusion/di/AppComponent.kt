@@ -11,6 +11,5 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(target: BusinessListActivity)
-    fun inject(target: BusinessDetailActivity)
     fun inject(target: BusinessDetailFragment)
 }
