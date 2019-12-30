@@ -38,6 +38,10 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'
 
+    implementation 'pub.devrel:easypermissions:3.0.0'
+
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
     implementation 'androidx.viewpager:viewpager:1.0.0'
 
 

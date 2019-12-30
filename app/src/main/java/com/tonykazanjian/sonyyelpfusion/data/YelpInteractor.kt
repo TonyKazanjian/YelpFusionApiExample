@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class YelpInteractor @Inject constructor(private var yelpApiService: YelpApiService){
 
-    fun getBusinesses(searchTerm: String, latitude: String = "37.78688", longitude: String = "-122.399972", offset: Int = 0): Observable<List<Business>>{
+    fun getBusinesses(searchTerm: String, latitude: String, longitude: String, offset: Int = 0): Observable<List<Business>>{
         return yelpApiService.getBusinesses(ApiUtils.createHeader(), searchTerm, latitude, longitude, offset).map {
             it.businessList
         }

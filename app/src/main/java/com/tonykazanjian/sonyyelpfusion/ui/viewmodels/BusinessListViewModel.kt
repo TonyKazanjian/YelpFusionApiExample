@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteractor): ViewModel() {
+class BusinessListViewModel @Inject constructor(private val yelpInteractor: YelpInteractor): ViewModel() {
 
     private var disposable: Disposable? = null
 
@@ -26,6 +26,9 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
         it.value = false
     }
 
+    var latitude: String = ""
+    var longitude: String = ""
+
     fun fetchBusinesses(searchTerm: String? = "", offset: Int = 0){
         val termToSearch = if (searchTerm.isNullOrEmpty()){
             this.searchTerm
@@ -35,7 +38,7 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
 
         isLoading.value = true
         termToSearch?.let{
-            disposable = yelpInteractor.getBusinesses(termToSearch, offset = offset)
+            disposable = yelpInteractor.getBusinesses(termToSearch, latitude, longitude, offset = offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally { isLoading.value = false }

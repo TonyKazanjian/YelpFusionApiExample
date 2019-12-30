@@ -1,8 +1,10 @@
 package com.tonykazanjian.sonyyelpfusion.ui
 
+import android.Manifest
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -14,11 +16,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tonykazanjian.sonyyelpfusion.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
 
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
+import pub.devrel.easypermissions.EasyPermissions
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import com.tonykazanjian.sonyyelpfusion.R
+
 
 /**
  * An activity representing a list of Pings. This activity
@@ -36,6 +45,7 @@ class BusinessListActivity : BaseActivity() {
      */
     private var twoPane: Boolean = false
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var businessListViewModel: BusinessListViewModel
     private lateinit var binding: ActivityBusinessListBinding
 
@@ -65,6 +75,10 @@ class BusinessListActivity : BaseActivity() {
         appComponent.inject(this)
         binding =  DataBindingUtil.setContentView(this, R.layout.activity_business_list)
         businessListViewModel = ViewModelProvider(this, viewModeFactory).get(BusinessListViewModel::class.java)
+
+        requestPermissions()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        setSearchLocation()
 
         if (business_detail_container != null) {
             // The detail container view will be present only in the
@@ -121,6 +135,14 @@ class BusinessListActivity : BaseActivity() {
         })
     }
 
+    private fun setSearchLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            businessListViewModel.latitude = location?.latitude.toString()
+            businessListViewModel.longitude = location?.longitude.toString()
+
+        }
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent?.action) {
@@ -142,6 +164,26 @@ class BusinessListActivity : BaseActivity() {
         }
         return true
     }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+        setSearchLocation()
+    }
+
+    private fun requestPermissions() {
+        if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(
+                this, "This app requires location permissions to search for local businesses",
+                0, Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
+    }
+
 
     abstract class PaginationScrollListener(private var layoutManager: LinearLayoutManager) :
         RecyclerView.OnScrollListener() {
