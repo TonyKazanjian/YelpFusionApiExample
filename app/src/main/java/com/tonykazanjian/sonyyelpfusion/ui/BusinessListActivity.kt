@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.tonykazanjian.sonyyelpfusion.R
 import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
 
@@ -38,7 +39,26 @@ class BusinessListActivity : BaseActivity() {
     private lateinit var businessListViewModel: BusinessListViewModel
     private lateinit var binding: ActivityBusinessListBinding
 
-    private var businessAdapter: BusinessListAdapter? = null
+    private var businessAdapter = BusinessListAdapter( { business ->
+        if (twoPane) {
+            val fragment = BusinessDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
+                    putString(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
+                }
+            }
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.business_detail_container, fragment)
+                .commit()
+        } else {
+            val intent = Intent(this, BusinessDetailActivity::class.java).apply {
+                putExtra(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
+                putExtra(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
+            }
+            startActivity(intent)
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,50 +74,41 @@ class BusinessListActivity : BaseActivity() {
             twoPane = true
         }
 
-        businessAdapter = BusinessListAdapter( {
-                business ->
-            if (twoPane) {
-                val fragment = BusinessDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
-                        putString(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
-                    }
-                }
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.business_detail_container, fragment)
-                    .commit()
-            } else {
-                val intent = Intent(this, BusinessDetailActivity::class.java).apply {
-                    putExtra(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
-                    putExtra(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
-                }
-                startActivity(intent)
-            }
-        })
-
         binding.apply {
             setSupportActionBar(toolbar)
             toolbar.title = title
-            businessListRecyclerView.apply {
-                adapter = businessAdapter
-                layoutManager = LinearLayoutManager(this.context)
-                addItemDecoration(
-                    DividerItemDecoration(
-                        this.context,
-                        LinearLayout.VERTICAL
-                    )
-                )
-            }
             lifecycleOwner = this@BusinessListActivity
             viewModel = businessListViewModel
+        }
+
+        binding.businessListRecyclerView.apply {
+            adapter = businessAdapter
+            layoutManager = LinearLayoutManager(this.context)
+            addItemDecoration(
+                DividerItemDecoration(
+                    this.context,
+                    LinearLayout.VERTICAL
+                )
+            )
+            addOnScrollListener(object : PaginationScrollListener(layoutManager as LinearLayoutManager){
+                override fun loadMoreItems() {
+                    businessListViewModel.fetchBusinesses("", 20)
+                }
+
+                override fun isLoading(): Boolean {
+                    businessListViewModel.isLoading().value?.let { loading ->
+                        return loading
+                    }
+                    return false
+                }
+            })
         }
 
         businessListViewModel.getBusinesses().observe(this, Observer {
             if (it.isEmpty()){
                 //TODO - show no items message
             } else {
-                businessAdapter?.setQueryData(it)
+                businessAdapter.addData(it)
             }
         })
 
@@ -113,8 +124,10 @@ class BusinessListActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent?.action) {
-            businessAdapter?.clearItems()
+            businessAdapter.clearItems()
             intent.getStringExtra(SearchManager.QUERY).apply {
+                businessAdapter.clearItems()
+                businessListViewModel.searchTerm = this
                 businessListViewModel.fetchBusinesses(this)
 
             }
@@ -128,5 +141,26 @@ class BusinessListActivity : BaseActivity() {
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
         return true
+    }
+
+    abstract class PaginationScrollListener(private var layoutManager: LinearLayoutManager) :
+        RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+            if (!isLoading()) {
+                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    loadMoreItems()
+                }
+            }
+        }
+
+        protected abstract fun loadMoreItems()
+        protected abstract fun isLoading(): Boolean
     }
 }

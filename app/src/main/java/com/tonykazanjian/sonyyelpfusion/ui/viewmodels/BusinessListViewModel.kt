@@ -16,6 +16,8 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
 
     private val listLiveData = MutableLiveData<List<Business>>()
 
+    var searchTerm: String? = ""
+
     private val isError = MutableLiveData<Boolean>().also {
         it.value = false
     }
@@ -24,16 +26,21 @@ class BusinessListViewModel @Inject constructor(val yelpInteractor: YelpInteract
         it.value = false
     }
 
-    fun fetchBusinesses(searchTerm: String?){
+    fun fetchBusinesses(searchTerm: String? = "", offset: Int = 0){
+        val termToSearch = if (searchTerm.isNullOrEmpty()){
+            this.searchTerm
+        } else {
+            searchTerm
+        }
+
         isLoading.value = true
-        searchTerm?.let{
-            disposable = yelpInteractor.getBusinesses(searchTerm)
+        termToSearch?.let{
+            disposable = yelpInteractor.getBusinesses(termToSearch, offset = offset)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally { isLoading.value = false }
                 .subscribe ({list -> listLiveData.postValue(list)}, this::onError)
         }
-
     }
 
     fun getBusinesses(): LiveData<List<Business>>{

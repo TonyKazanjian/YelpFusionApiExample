@@ -15,7 +15,7 @@ class BusinessListViewModelTest: BaseViewModelTest() {
     private val mockApiService: YelpApiService = mock()
     private val observer: Observer<List<Business>> = mock()
 
-    private val business = Business("test-business", "Test Business", "", "", "$$", 5.0f, listOf(), Location(
+    private val business = Business("test-business", "Test Business", "", false, "", "$$", 5f,  listOf(), Location(
         listOf()))
     private val businessList = mutableListOf<Business>().apply { add(business) }
 
@@ -52,7 +52,8 @@ class BusinessListViewModelTest: BaseViewModelTest() {
             ArgumentMatchers.anyString(),
             ArgumentMatchers.anyString(),
             ArgumentMatchers.anyString(),
-            ArgumentMatchers.anyString())).thenReturn(Observable.just(response))
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyInt())).thenReturn(Observable.just(response))
     }
 
     private fun whenDataIsFetched(){

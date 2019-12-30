@@ -14,11 +14,11 @@ import javax.inject.Inject
 class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpInteractor): ViewModel(){
     private var disposable: Disposable? = null
 
-    val businessLiveData = MutableLiveData<Business>()
+    private val businessLiveData = MutableLiveData<Business>()
 
-    val reviewsLiveData = MutableLiveData<List<Review>>()
+    private val reviewsLiveData = MutableLiveData<List<Review>>()
 
-    val photosLiveData = MutableLiveData<List<String>>()
+    private val photosLiveData = MutableLiveData<List<String>>()
 
     private var business: Business? = null
 
@@ -81,15 +81,20 @@ class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpIntera
         return addressBuilder.toString()
     }
 
-    fun isLoading(): LiveData<Boolean> {
-        return isLoading
+    fun getBusinessLiveData(): LiveData<Business>{
+        return businessLiveData
     }
 
-    private fun setImageUrlData(){
-        business?.let {
-            it.photos.toMutableList().add(0, it.imageUrl)
-            photosLiveData.postValue(it.photos)
-        }
+    fun getReviewsLiveData(): LiveData<List<Review>>{
+        return reviewsLiveData
+    }
+
+    fun getPhotosLiveData(): LiveData<List<String>> {
+        return photosLiveData
+    }
+
+    fun isLoading(): LiveData<Boolean> {
+        return isLoading
     }
 
     private fun onError(e: Throwable){

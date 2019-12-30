@@ -17,12 +17,6 @@ class BusinessListAdapter(private var onItemClickListener: (Business) -> Unit, p
         notifyItemInserted(this.list.size-1)
     }
 
-    fun setQueryData(list: List<Business>){
-        clearItems()
-        this.list = list.toMutableList()
-        notifyDataSetChanged()
-    }
-
     fun clearItems(){
         list.clear()
         notifyDataSetChanged()

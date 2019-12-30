@@ -27,7 +27,7 @@ import javax.inject.Inject
  * in two-pane mode (on tablets) or a [BusinessDetailActivity]
  * on handsets.
  */
-class BusinessDetailFragment : Fragment() {
+open class BusinessDetailFragment : Fragment() {
 
     @Inject
     protected lateinit var viewModelFactory: ViewModelFactory
@@ -69,7 +69,7 @@ class BusinessDetailFragment : Fragment() {
         ViewModelProvider(this, viewModelFactory).get(BusinessDetailViewModel::class.java).apply {
             fetchBusinessDetail(businessAlias)
 
-            businessLiveData.observe(viewLifecycleOwner, Observer {
+            getBusinessLiveData().observe(viewLifecycleOwner, Observer {
                 binding.viewModel = this
                 if (it.price.isNullOrEmpty()){
                     binding.businessDetailPriceTextView.visibility = View.GONE
@@ -79,11 +79,11 @@ class BusinessDetailFragment : Fragment() {
                 }
             })
 
-            photosLiveData.observe(viewLifecycleOwner, Observer { photos ->
+            getPhotosLiveData().observe(viewLifecycleOwner, Observer { photos ->
                 imageListener?.onImagesReceived(photos)
             })
 
-            reviewsLiveData.observe(viewLifecycleOwner, Observer { reviews ->
+            getReviewsLiveData().observe(viewLifecycleOwner, Observer { reviews ->
                 reviewAdapter.setData(reviews)
             })
 

@@ -16,7 +16,8 @@ interface YelpApiService {
     fun getBusinesses(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String,
                       @Query("term") searchTerm: String,
                       @Query("latitude") latitude: String,
-                      @Query("longitude") longitude: String): Observable<BusinessesResponse>
+                      @Query("longitude") longitude: String,
+                      @Query("offset") offset: Int): Observable<BusinessesResponse>
 
     @GET("businesses/{id}")
     fun getBusinessById(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<Business>
