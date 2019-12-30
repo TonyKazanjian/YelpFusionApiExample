@@ -97,6 +97,14 @@ class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: Ye
         return isError
     }
 
+    fun clearDisposable(){
+        disposable?.let {
+            if (!it.isDisposed){
+                it.dispose()
+            }
+        }
+    }
+
     private fun onError(e: Throwable){
         isError.value = true
         e.printStackTrace()

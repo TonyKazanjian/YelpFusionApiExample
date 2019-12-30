@@ -16,8 +16,6 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
 
     private val listLiveData = MutableLiveData<List<Business>>()
 
-    var searchTerm: String? = ""
-
     private val isError = MutableLiveData<Boolean>().also {
         it.value = false
     }
@@ -26,6 +24,7 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
         it.value = false
     }
 
+    var searchTerm: String? = ""
     var latitude: String = ""
     var longitude: String = ""
 
@@ -56,6 +55,14 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
 
     fun isError(): LiveData<Boolean>{
         return isError
+    }
+
+    fun clearDisposable(){
+        disposable?.let {
+            if (!it.isDisposed){
+                it.dispose()
+            }
+        }
     }
 
     private fun onError(e: Throwable){

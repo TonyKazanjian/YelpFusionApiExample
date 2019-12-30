@@ -29,8 +29,6 @@ import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
 import pub.devrel.easypermissions.EasyPermissions
 
-
-
 fun Context.startDetailActivity(activity: Activity, imageView: ImageView, business: Business){
     val intent = Intent(this, BusinessDetailActivity::class.java).apply {
         putExtra(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
@@ -185,6 +183,11 @@ class BusinessListActivity : BaseActivity() {
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        businessListViewModel.clearDisposable()
     }
 
 

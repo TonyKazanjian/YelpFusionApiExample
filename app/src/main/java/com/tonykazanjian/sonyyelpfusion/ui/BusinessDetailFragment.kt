@@ -43,6 +43,7 @@ open class BusinessDetailFragment : Fragment() {
     private var businessAlias: String? = null
 
     private lateinit var binding: BusinessDetailBinding
+    private lateinit var viewModel: BusinessDetailViewModel
 
     private var imageListener: ImageListener? = null
 
@@ -71,7 +72,7 @@ open class BusinessDetailFragment : Fragment() {
             layoutManager = LinearLayoutManager(this.context)
         }
 
-        ViewModelProvider(this, viewModelFactory).get(BusinessDetailViewModel::class.java).apply {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(BusinessDetailViewModel::class.java).apply {
 
             fetchBusinessDetail(businessAlias)
 
@@ -114,6 +115,11 @@ open class BusinessDetailFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.clearDisposable()
     }
 
     fun setImageListener(imageListener: ImageListener){

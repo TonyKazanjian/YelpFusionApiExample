@@ -1,8 +1,5 @@
 package com.tonykazanjian.sonyyelpfusion
 
-/**
- * @author Tony Kazanjian
- */
 class ApiUtils {
     companion object{
         const val BASE_URL = "https://api.yelp.com/v3/"

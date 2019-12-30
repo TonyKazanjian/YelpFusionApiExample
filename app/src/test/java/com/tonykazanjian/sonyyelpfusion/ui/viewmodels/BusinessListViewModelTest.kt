@@ -13,7 +13,8 @@ class BusinessListViewModelTest: BaseViewModelTest() {
 
     private lateinit var viewModel: BusinessListViewModel
     private val mockApiService: YelpApiService = mock()
-    private val observer: Observer<List<Business>> = mock()
+    private val businessListObserver: Observer<List<Business>> = mock()
+    private val errorObserver: Observer<Boolean> = mock()
 
     private val business = Business("test-business", "Test Business", "", false, "", "$$", 5f,  listOf(), Location(
         listOf()))
@@ -22,29 +23,27 @@ class BusinessListViewModelTest: BaseViewModelTest() {
     @Before
     fun setUp() {
         viewModel = BusinessListViewModel(YelpInteractor(mockApiService))
-        viewModel.getBusinesses().observeForever(observer)
+        viewModel.getBusinesses().observeForever(businessListObserver)
+        viewModel.isLoading().observeForever(errorObserver)
     }
 
     @After
     fun tearDown() {
+        viewModel.clearDisposable()
     }
 
     @Test
     fun testBusinessFetch() {
         givenApiReturnsData(BusinessesResponse(businessList))
         whenDataIsFetched()
-        thenLiveDataIsUpdated()
-    }
-
-
-    @Test
-    fun testLoadingDisplayed() {
-
+        thenBusinessLiveDataIsUpdated()
     }
 
     @Test
     fun testErrorDisplayed(){
-
+        givenApiReturnsError()
+        whenDataIsFetched()
+        thenErrorLiveDataIsUpdated()
     }
 
     private fun givenApiReturnsData(response: BusinessesResponse){
@@ -60,8 +59,23 @@ class BusinessListViewModelTest: BaseViewModelTest() {
         viewModel.fetchBusinesses("test")
     }
 
-    private fun thenLiveDataIsUpdated(){
+    private fun thenBusinessLiveDataIsUpdated(){
         assertEquals(businessList, viewModel.getBusinesses().value)
     }
+
+    private fun givenApiReturnsError(){
+        `when`(mockApiService.getBusinesses(
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyInt())).thenReturn(Observable.error(Exception("Test Error")))
+    }
+
+    private fun thenErrorLiveDataIsUpdated(){
+        assertEquals(true, viewModel.isError().value)
+
+    }
+
 }
 
