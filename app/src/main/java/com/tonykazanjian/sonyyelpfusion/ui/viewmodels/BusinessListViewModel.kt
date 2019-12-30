@@ -54,6 +54,10 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
         return isLoading
     }
 
+    fun isError(): LiveData<Boolean>{
+        return isError
+    }
+
     private fun onError(e: Throwable){
         isError.value = true
         e.printStackTrace()

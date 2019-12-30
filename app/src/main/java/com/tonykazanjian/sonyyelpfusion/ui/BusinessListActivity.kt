@@ -18,19 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.tonykazanjian.sonyyelpfusion.R
 import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
-
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
 import pub.devrel.easypermissions.EasyPermissions
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import com.tonykazanjian.sonyyelpfusion.R
 
 
 /**
- * An activity representing a list of Pings. This activity
+ * An activity representing a list of Businsesses matching a search term. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
  * lead to a [BusinessDetailActivity] representing
@@ -119,9 +115,11 @@ class BusinessListActivity : BaseActivity() {
         }
 
         businessListViewModel.getBusinesses().observe(this, Observer {
+            binding.searchPromptTextView?.visibility = View.INVISIBLE
             if (it.isEmpty()){
-                //TODO - show no items message
+                binding.emptyListTextView?.visibility = View.VISIBLE
             } else {
+                binding.emptyListTextView?.visibility = View.INVISIBLE
                 businessAdapter.addData(it)
             }
         })
@@ -131,6 +129,17 @@ class BusinessListActivity : BaseActivity() {
                 binding.progressBar.visibility = View.INVISIBLE
             } else {
                 binding.progressBar.visibility = View.VISIBLE
+            }
+        })
+
+        businessListViewModel.isError().observe(this, Observer { isError ->
+            if (!isError){
+                binding.progressBar.visibility = View.INVISIBLE
+                binding.errorTextView?.visibility = View.INVISIBLE
+            } else {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.errorTextView?.visibility = View.VISIBLE
+
             }
         })
     }

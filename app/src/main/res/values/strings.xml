@@ -8,4 +8,7 @@
     <string name="business_status_open">Open</string>
     <string name="review_date">Reviewed on %1$s</string>
     <string name="business_url_prompt"><annotation type="yelp_link">Visit site on Yelp</annotation></string>
+    <string name="empty_list_message">There seem to be no businesses with that search term. Please try another</string>
+    <string name="error_message">There seems to be an error, please try again</string>
+    <string name="search_prompt">Select the search icon above to search local businesses.</string>
 </resources>

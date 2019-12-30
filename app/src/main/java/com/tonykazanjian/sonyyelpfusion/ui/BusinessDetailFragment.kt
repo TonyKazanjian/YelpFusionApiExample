@@ -103,6 +103,14 @@ open class BusinessDetailFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
             })
+
+            isError().observe(viewLifecycleOwner, Observer { isError ->
+                if (isError){
+                    binding.errorTextView.visibility = View.VISIBLE
+                } else {
+                    binding.errorTextView.visibility = View.INVISIBLE
+                }
+            })
         }
 
         return binding.root
