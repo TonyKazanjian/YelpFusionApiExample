@@ -3,13 +3,14 @@ package com.tonykazanjian.sonyyelpfusion.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tonykazanjian.sonyyelpfusion.R
 import com.tonykazanjian.sonyyelpfusion.data.Business
 import kotlinx.android.synthetic.main.business_item.view.*
 
-class BusinessListAdapter(private var onItemClickListener: (Business) -> Unit, private var list: MutableList<Business> = mutableListOf())
+class BusinessListAdapter(private var onItemClickListener: (Business, ImageView) -> Unit, private var list: MutableList<Business> = mutableListOf())
     : RecyclerView.Adapter<BusinessListAdapter.BusinessViewHolder>() {
 
     fun addData(list: List<Business>){
@@ -34,7 +35,6 @@ class BusinessListAdapter(private var onItemClickListener: (Business) -> Unit, p
     override fun onBindViewHolder(holder: BusinessViewHolder, position: Int) {
         val business = list[position]
         holder.bind(business)
-        holder.itemView.setOnClickListener{onItemClickListener(business)}
     }
 
     override fun setHasStableIds(hasStableIds: Boolean) {
@@ -60,6 +60,7 @@ class BusinessListAdapter(private var onItemClickListener: (Business) -> Unit, p
                     .load(item.imageUrl)
                     .into(business_image_view)
             }
+            itemView.setOnClickListener { onItemClickListener(item, view.business_image_view) }
         }
     }
 

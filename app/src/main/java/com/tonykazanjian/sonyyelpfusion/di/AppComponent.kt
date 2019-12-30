@@ -1,6 +1,5 @@
 package com.tonykazanjian.sonyyelpfusion.di
 
-import com.tonykazanjian.sonyyelpfusion.ui.BusinessDetailActivity
 import com.tonykazanjian.sonyyelpfusion.ui.BusinessDetailFragment
 import com.tonykazanjian.sonyyelpfusion.ui.BusinessListActivity
 import dagger.Component

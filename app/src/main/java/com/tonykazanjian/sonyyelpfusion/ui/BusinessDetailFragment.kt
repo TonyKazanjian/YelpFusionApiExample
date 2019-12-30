@@ -155,6 +155,7 @@ open class BusinessDetailFragment : Fragment() {
     companion object {
         const val ARG_BUSINESS_ALIAS = "business_alias"
         const val ARG_BUSINESS_NAME = "business_name"
+        const val ARG_BUSINESS_IMAGE_URL = "business_image"
     }
 
     interface ImageListener {

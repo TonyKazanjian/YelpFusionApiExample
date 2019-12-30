@@ -3,6 +3,7 @@ package com.tonykazanjian.sonyyelpfusion.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import com.bumptech.glide.Glide
 import com.tonykazanjian.sonyyelpfusion.R
 import kotlinx.android.synthetic.main.activity_business_detail.*
 
@@ -20,6 +21,10 @@ class BusinessDetailActivity : BaseActivity(), BusinessDetailFragment.ImageListe
         setSupportActionBar(detail_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
+            Glide.with(transitioned_image_view.context)
+                .load(intent.getStringExtra(BusinessDetailFragment.ARG_BUSINESS_IMAGE_URL))
+                .into(transitioned_image_view)
+
             val fragment = BusinessDetailFragment().apply {
                 setImageListener(this@BusinessDetailActivity)
                 arguments = Bundle().apply {
@@ -50,6 +55,7 @@ class BusinessDetailActivity : BaseActivity(), BusinessDetailFragment.ImageListe
         }
 
     override fun onImagesReceived(imageList: List<String>) {
+        transitioned_image_view.animate().alpha(0f).setDuration(300).start()
         val viewPager = pager
         val imageAdapter = BusinessImageAdapter()
         viewPager.adapter = imageAdapter

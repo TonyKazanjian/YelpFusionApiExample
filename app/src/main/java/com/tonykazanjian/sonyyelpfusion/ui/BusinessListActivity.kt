@@ -1,6 +1,7 @@
 package com.tonykazanjian.sonyyelpfusion.ui
 
 import android.Manifest
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -8,8 +9,11 @@ import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,12 +23,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tonykazanjian.sonyyelpfusion.R
+import com.tonykazanjian.sonyyelpfusion.data.Business
 import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
 import pub.devrel.easypermissions.EasyPermissions
 
 
+
+fun Context.startDetailActivity(activity: Activity, imageView: ImageView, business: Business){
+    val intent = Intent(this, BusinessDetailActivity::class.java).apply {
+        putExtra(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
+        putExtra(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
+        putExtra(BusinessDetailFragment.ARG_BUSINESS_IMAGE_URL, business.imageUrl)
+    }
+    val activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+        activity, Pair.create(imageView, getString(R.string.transition_image))
+    )
+    startActivity(intent, activityOptions.toBundle())
+}
 /**
  * An activity representing a list of Businsesses matching a search term. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -45,7 +62,7 @@ class BusinessListActivity : BaseActivity() {
     private lateinit var businessListViewModel: BusinessListViewModel
     private lateinit var binding: ActivityBusinessListBinding
 
-    private var businessAdapter = BusinessListAdapter( { business ->
+    private var businessAdapter = BusinessListAdapter( { business, imageView ->
         if (twoPane) {
             val fragment = BusinessDetailFragment().apply {
                 arguments = Bundle().apply {
@@ -58,11 +75,7 @@ class BusinessListActivity : BaseActivity() {
                 .replace(R.id.business_detail_container, fragment)
                 .commit()
         } else {
-            val intent = Intent(this, BusinessDetailActivity::class.java).apply {
-                putExtra(BusinessDetailFragment.ARG_BUSINESS_ALIAS, business.alias)
-                putExtra(BusinessDetailFragment.ARG_BUSINESS_NAME, business.name)
-            }
-            startActivity(intent)
+            startDetailActivity(this, imageView, business)
         }
     })
 
