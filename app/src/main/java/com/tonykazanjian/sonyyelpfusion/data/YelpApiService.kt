@@ -12,7 +12,6 @@ import retrofit2.http.Query
 interface YelpApiService {
 
     @GET("businesses/search")
-    //TODO - location
     fun getBusinesses(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String,
                       @Query("term") searchTerm: String,
                       @Query("latitude") latitude: String,

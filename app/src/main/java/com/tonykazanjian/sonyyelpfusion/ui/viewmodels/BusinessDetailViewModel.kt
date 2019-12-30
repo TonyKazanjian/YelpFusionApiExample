@@ -11,7 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpInteractor): ViewModel(){
+class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: YelpInteractor): ViewModel(){
     private var disposable: Disposable? = null
 
     private val businessLiveData = MutableLiveData<Business>()
@@ -60,10 +60,6 @@ class BusinessDetailViewModel @Inject constructor(val yelpInteractor: YelpIntera
 
     fun getRating(): Float? {
         return business?.rating
-    }
-
-    fun getUrl(): String? {
-        return business?.businessUrl
     }
 
     fun getPhoneNumber(): String? {

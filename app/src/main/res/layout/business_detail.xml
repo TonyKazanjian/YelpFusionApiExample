@@ -42,8 +42,6 @@
             android:id="@+id/business_detail_url_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.url}"
-            tools:text="www.yelp.business.com"
             android:autoLink="web"
             android:padding="5dp"
             app:layout_constraintTop_toBottomOf="@id/business_detail_name_text_view"
@@ -98,8 +96,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             app:layout_constraintTop_toBottomOf="@id/business_detail_phone_text_view"
-            app:layout_constraintStart_toStartOf="@id/business_detail_phone_text_view"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toStartOf="@id/business_detail_phone_text_view">
 
         </androidx.recyclerview.widget.RecyclerView>
 

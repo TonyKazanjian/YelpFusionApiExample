@@ -3,17 +3,25 @@ package com.tonykazanjian.sonyyelpfusion.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.util.Linkify
-import android.util.Log
+import android.text.Annotation
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.SpannedString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tonykazanjian.sonyyelpfusion.R
+import com.tonykazanjian.sonyyelpfusion.data.Business
 import com.tonykazanjian.sonyyelpfusion.databinding.BusinessDetailBinding
 import com.tonykazanjian.sonyyelpfusion.di.DaggerAppComponent
 import com.tonykazanjian.sonyyelpfusion.di.ViewModelFactory
@@ -57,9 +65,6 @@ open class BusinessDetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.business_detail, container, false)
-        binding.businessDetailUrlTextView.text = "Visit site on Yelp"
-        //TODO - fix how text is displayed
-        Linkify.addLinks(binding.businessDetailUrlTextView, Linkify.WEB_URLS)
 
         binding.reviewsRecyclerView.apply {
             adapter = reviewAdapter
@@ -67,16 +72,19 @@ open class BusinessDetailFragment : Fragment() {
         }
 
         ViewModelProvider(this, viewModelFactory).get(BusinessDetailViewModel::class.java).apply {
+
             fetchBusinessDetail(businessAlias)
 
-            getBusinessLiveData().observe(viewLifecycleOwner, Observer {
+            getBusinessLiveData().observe(viewLifecycleOwner, Observer {business ->
                 binding.viewModel = this
-                if (it.price.isNullOrEmpty()){
+                if (business.price.isNullOrEmpty()){
                     binding.businessDetailPriceTextView.visibility = View.GONE
                 }
-                if (it.phoneNumber.isNullOrEmpty()){
+                if (business.phoneNumber.isNullOrEmpty()){
                     binding.businessDetailPhoneTextView.visibility = View.GONE
                 }
+
+                binding.businessDetailUrlTextView.setSpannableLink(business)
             })
 
             getPhotosLiveData().observe(viewLifecycleOwner, Observer { photos ->
@@ -102,6 +110,38 @@ open class BusinessDetailFragment : Fragment() {
 
     fun setImageListener(imageListener: ImageListener){
         this.imageListener = imageListener
+    }
+
+    private fun TextView.setSpannableLink(business: Business) {
+        val linkText = SpannedString(getText(R.string.business_url_prompt))
+        val spannableString = SpannableString(linkText)
+
+        val annotations = linkText.getSpans(0, linkText.length, Annotation::class.java)
+
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(business.businessUrl)
+                    startActivity(this)
+                }
+            }
+        }
+
+        annotations?.find { it.value == "yelp_link" }?.let {
+            spannableString.apply {
+                setSpan(
+                    clickableSpan, linkText.getSpanStart(it), linkText.getSpanEnd(it),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                setSpan(
+                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent)),
+                    linkText.getSpanStart(it), linkText.getSpanEnd(it), 0
+                )
+            }
+        }
+
+        this.text = spannableString
+        movementMethod = LinkMovementMethod.getInstance()
     }
 
     companion object {
