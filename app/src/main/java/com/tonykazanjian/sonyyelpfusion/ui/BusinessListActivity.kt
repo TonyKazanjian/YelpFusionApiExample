@@ -144,6 +144,7 @@ class BusinessListActivity : BaseActivity() {
         })
 
         businessListViewModel.isError().observe(this, Observer { isError ->
+            binding.searchPromptTextView?.visibility = View.INVISIBLE
             if (!isError){
                 binding.progressBar.visibility = View.INVISIBLE
                 binding.errorTextView?.visibility = View.INVISIBLE
