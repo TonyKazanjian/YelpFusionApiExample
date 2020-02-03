@@ -1,7 +1,6 @@
 package com.tonykazanjian.sonyyelpfusion.data
 
 import com.tonykazanjian.sonyyelpfusion.ApiUtils
-import io.reactivex.Observable
 import javax.inject.Inject
 
 class YelpInteractor @Inject constructor(private var yelpApiService: YelpApiService){
@@ -10,13 +9,11 @@ class YelpInteractor @Inject constructor(private var yelpApiService: YelpApiServ
         return yelpApiService.getBusinesses(ApiUtils.createHeader(), searchTerm, latitude, longitude, offset).businessList
     }
 
-    fun getBusinessByAlias(alias: String): Observable<Business>{
+    suspend fun getBusinessByAlias(alias: String): Business{
         return yelpApiService.getBusinessById(ApiUtils.createHeader(), alias)
     }
 
-    fun getBusinessReviews(alias: String): Observable<List<Review>>{
-        return yelpApiService.getBusinessReviews(ApiUtils.createHeader(), alias).map {
-            response -> response.reviewsList
-        }
+    suspend fun getBusinessReviews(alias: String): List<Review>{
+        return yelpApiService.getBusinessReviews(ApiUtils.createHeader(), alias).reviewsList
     }
 }

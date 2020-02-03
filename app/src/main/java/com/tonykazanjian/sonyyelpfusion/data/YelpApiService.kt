@@ -1,7 +1,6 @@
 package com.tonykazanjian.sonyyelpfusion.data
 
 import com.tonykazanjian.sonyyelpfusion.ApiUtils
-import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -17,8 +16,7 @@ interface YelpApiService {
                       @Query("offset") offset: Int): BusinessesResponse
 
     @GET("businesses/{id}")
-    fun getBusinessById(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<Business>
+    suspend fun getBusinessById(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Business
 
     @GET("businesses/{id}/reviews")
-    fun getBusinessReviews(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): Observable<ReviewResponse>
-}
+    suspend fun getBusinessReviews(@Header(ApiUtils.AUTHORIZATION_HEADER) authToken: String, @Path("id") alias: String): ReviewResponse}

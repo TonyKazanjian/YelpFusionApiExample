@@ -3,16 +3,14 @@ package com.tonykazanjian.sonyyelpfusion.ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tonykazanjian.sonyyelpfusion.data.Business
 import com.tonykazanjian.sonyyelpfusion.data.Review
 import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: YelpInteractor): ViewModel(){
-    private var disposable: Disposable? = null
 
     private val businessLiveData = MutableLiveData<Business>()
 
@@ -33,14 +31,14 @@ class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: Ye
     fun fetchBusinessDetail(alias: String?){
         isLoading.value = true
         alias?.let{
-            disposable = yelpInteractor.getBusinessByAlias(alias)
-                .subscribeOn(Schedulers.io())
-                .doOnNext (this::setBusinessData)
-                .flatMap { business -> yelpInteractor.getBusinessReviews(business.alias) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doFinally { isLoading.value = false }
-                .subscribe ({reviews -> reviewsLiveData.postValue(reviews)
-                }, this::onError)
+            viewModelScope.launch {
+                yelpInteractor.getBusinessByAlias(alias).apply {
+                    setBusinessData(this)
+                    yelpInteractor.getBusinessReviews(this.alias).apply {
+                        reviewsLiveData.postValue(this)
+                    }
+                }
+            }
         }
     }
 
@@ -98,11 +96,12 @@ class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: Ye
     }
 
     fun clearDisposable(){
-        disposable?.let {
-            if (!it.isDisposed){
-                it.dispose()
-            }
-        }
+
+//        disposable?.let {
+//            if (!it.isDisposed){
+//                it.dispose()
+//            }
+//        }
     }
 
     private fun onError(e: Throwable){
