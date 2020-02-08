@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tonykazanjian.sonyyelpfusion.data.Business
-import com.tonykazanjian.sonyyelpfusion.data.Review
 import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
+import com.tonykazanjian.sonyyelpfusion.domain.Business
+import com.tonykazanjian.sonyyelpfusion.domain.Review
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

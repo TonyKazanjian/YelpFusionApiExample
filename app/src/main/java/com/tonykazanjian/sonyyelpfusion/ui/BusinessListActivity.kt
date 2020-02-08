@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.tonykazanjian.sonyyelpfusion.R
-import com.tonykazanjian.sonyyelpfusion.data.Business
 import com.tonykazanjian.sonyyelpfusion.databinding.ActivityBusinessListBinding
+import com.tonykazanjian.sonyyelpfusion.domain.Business
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessListViewModel
 import kotlinx.android.synthetic.main.activity_business_list.*
 import pub.devrel.easypermissions.EasyPermissions

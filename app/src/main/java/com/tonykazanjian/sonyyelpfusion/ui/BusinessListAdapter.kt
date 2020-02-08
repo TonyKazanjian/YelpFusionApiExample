@@ -7,7 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tonykazanjian.sonyyelpfusion.R
-import com.tonykazanjian.sonyyelpfusion.data.Business
+import com.tonykazanjian.sonyyelpfusion.domain.Business
 import kotlinx.android.synthetic.main.business_item.view.*
 
 class BusinessListAdapter(private var onItemClickListener: (Business, ImageView) -> Unit, private var list: MutableList<Business> = mutableListOf())

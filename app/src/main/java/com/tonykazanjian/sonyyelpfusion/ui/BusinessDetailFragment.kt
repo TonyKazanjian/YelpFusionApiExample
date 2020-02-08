@@ -21,10 +21,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tonykazanjian.sonyyelpfusion.R
-import com.tonykazanjian.sonyyelpfusion.data.Business
 import com.tonykazanjian.sonyyelpfusion.databinding.BusinessDetailBinding
 import com.tonykazanjian.sonyyelpfusion.di.DaggerAppComponent
 import com.tonykazanjian.sonyyelpfusion.di.ViewModelFactory
+import com.tonykazanjian.sonyyelpfusion.domain.Business
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.BusinessDetailViewModel
 import kotlinx.android.synthetic.main.activity_business_detail.*
 import javax.inject.Inject

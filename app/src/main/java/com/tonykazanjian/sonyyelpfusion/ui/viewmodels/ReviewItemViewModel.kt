@@ -1,7 +1,7 @@
 package com.tonykazanjian.sonyyelpfusion.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.tonykazanjian.sonyyelpfusion.data.Review
+import com.tonykazanjian.sonyyelpfusion.domain.Review
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -7,8 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tonykazanjian.sonyyelpfusion.R
-import com.tonykazanjian.sonyyelpfusion.data.Review
 import com.tonykazanjian.sonyyelpfusion.databinding.ReviewItemBinding
+import com.tonykazanjian.sonyyelpfusion.domain.Review
 import com.tonykazanjian.sonyyelpfusion.ui.viewmodels.ReviewItemViewModel
 
 class ReviewListAdapter(private var onItemClickListener: (String) -> Unit, var reviews: List<Review> = listOf())
