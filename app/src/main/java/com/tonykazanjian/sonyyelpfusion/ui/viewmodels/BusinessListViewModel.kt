@@ -1,15 +1,17 @@
 package com.tonykazanjian.sonyyelpfusion.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
+import com.tonykazanjian.sonyyelpfusion.data.YelpRepository
 import com.tonykazanjian.sonyyelpfusion.domain.Business
+import com.tonykazanjian.sonyyelpfusion.domain.BusinessListUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class BusinessListViewModel @Inject constructor(private val yelpInteractor: YelpInteractor): ViewModel() {
+class BusinessListViewModel @Inject constructor(private val listUseCase: BusinessListUseCase): ViewModel() {
 
     private val listLiveData = MutableLiveData<List<Business>>()
 
@@ -33,23 +35,13 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
         }
 
         isLoading.value = true
-        termToSearch?.let{
+        termToSearch?.let{term ->
             viewModelScope.launch {
-                try{
-                    yelpInteractor.getBusinesses(termToSearch, latitude, longitude, offset = offset).apply {
-                        listLiveData.postValue(this)
-                        isLoading.value = false
-                    }
-                } catch (error: Throwable){
+                listUseCase(BusinessListUseCase.Params(term, latitude, longitude, offset), {
+                    listLiveData.postValue(it)
                     isLoading.value = false
-                }
-
+                }, {onError(it)})
             }
-//            disposable = yelpInteractor.getBusinesses(termToSearch, latitude, longitude, offset = offset)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doFinally { isLoading.value = false }
-//                .subscribe ({list -> listLiveData.postValue(list)}, this::onError)
         }
     }
 
@@ -74,6 +66,7 @@ class BusinessListViewModel @Inject constructor(private val yelpInteractor: Yelp
     }
 
     private fun onError(e: Throwable){
+        isLoading.value = false
         isError.value = true
         e.printStackTrace()
     }

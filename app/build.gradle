@@ -3,6 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+//kotlin {
+//    experimental {
+//        coroutines "enable"
+//    }
+//}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -22,6 +28,10 @@ android {
     }
     dataBinding {
         enabled = true
+    }
+
+    kotlinOptions {
+        freeCompilerArgs = ["-Xallow-result-return-type"]
     }
 }
 

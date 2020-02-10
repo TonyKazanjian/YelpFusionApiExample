@@ -22,7 +22,7 @@ class BusinessListViewModelTest: BaseViewModelTest() {
 
     @Before
     fun setUp() {
-        viewModel = BusinessListViewModel(YelpInteractor(mockApiService))
+        viewModel = BusinessListViewModel(YelpRepository(mockApiService))
         viewModel.getBusinesses().observeForever(businessListObserver)
         viewModel.isLoading().observeForever(errorObserver)
     }

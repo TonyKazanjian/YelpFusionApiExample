@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tonykazanjian.sonyyelpfusion.data.YelpInteractor
 import com.tonykazanjian.sonyyelpfusion.domain.Business
+import com.tonykazanjian.sonyyelpfusion.domain.BusinessUseCase
 import com.tonykazanjian.sonyyelpfusion.domain.Review
+import com.tonykazanjian.sonyyelpfusion.domain.ReviewUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: YelpInteractor): ViewModel(){
+class BusinessDetailViewModel @Inject constructor(private val businessUseCase: BusinessUseCase, private val reviewUseCase: ReviewUseCase): ViewModel(){
 
     private val businessLiveData = MutableLiveData<Business>()
 
@@ -32,12 +33,12 @@ class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: Ye
         isLoading.value = true
         alias?.let{
             viewModelScope.launch {
-                yelpInteractor.getBusinessByAlias(alias).apply {
-                    setBusinessData(this)
-                    yelpInteractor.getBusinessReviews(this.alias).apply {
-                        reviewsLiveData.postValue(this)
-                    }
-                }
+                businessUseCase(BusinessUseCase.Params(it), {business ->
+                    setBusinessData(business)
+                    isLoading.value = false
+                }, { onError(it) })
+                reviewUseCase(ReviewUseCase.Params(it), { reviews -> reviewsLiveData.postValue(reviews) },
+                    { onError(it) })
             }
         }
     }
@@ -105,6 +106,7 @@ class BusinessDetailViewModel @Inject constructor(private val yelpInteractor: Ye
     }
 
     private fun onError(e: Throwable){
+        isLoading.value = false
         isError.value = true
         e.printStackTrace()
     }
